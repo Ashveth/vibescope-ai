@@ -1,0 +1,13 @@
+project_id = "bdunqxrsubglwrgyrskb"
+
+[auth]
+enabled = true
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["https://lovable.dev"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+[functions.analyze-sentiment]
+verify_jwt = true
