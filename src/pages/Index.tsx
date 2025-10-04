@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Auth } from "@/components/Auth";
-import { Dashboard } from "@/components/Dashboard";
 import { ThemeProvider } from "next-themes";
+import { Navigate } from "react-router-dom";
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
@@ -25,15 +25,21 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-lg">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-card to-muted">
+        <div className="animate-pulse text-lg bg-gradient-primary bg-clip-text text-transparent">
+          Loading...
+        </div>
       </div>
     );
   }
 
+  if (session) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <ThemeProvider attribute="class" defaultTheme="dark">
-      {!session ? <Auth /> : <Dashboard />}
+      <Auth />
     </ThemeProvider>
   );
 };

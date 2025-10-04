@@ -14,42 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      mentions: {
+      alert_settings: {
         Row: {
-          content: string
+          alert_threshold: string | null
+          auto_alerts_enabled: boolean | null
           created_at: string
           id: string
+          notification_methods: Json | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          alert_threshold?: string | null
+          auto_alerts_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          notification_methods?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          alert_threshold?: string | null
+          auto_alerts_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          notification_methods?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      competitors: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      feedback_loop: {
+        Row: {
+          created_at: string
+          edited_response: string
+          feedback_type: string | null
+          id: string
+          mention_id: string | null
+          original_response: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          edited_response: string
+          feedback_type?: string | null
+          id?: string
+          mention_id?: string | null
+          original_response: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          edited_response?: string
+          feedback_type?: string | null
+          id?: string
+          mention_id?: string | null
+          original_response?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_loop_mention_id_fkey"
+            columns: ["mention_id"]
+            isOneToOne: false
+            referencedRelation: "mentions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentions: {
+        Row: {
+          competitor: string | null
+          content: string
+          created_at: string
+          emotions: Json | null
+          id: string
           platform_user_id: string | null
+          response_used: boolean | null
           sentiment: string
           sentiment_score: number
+          severity: string | null
           source: string
           suggested_response: string | null
+          tags: string[] | null
+          team_approved: boolean | null
           timestamp: string
           user_id: string | null
           user_name: string
         }
         Insert: {
+          competitor?: string | null
           content: string
           created_at?: string
+          emotions?: Json | null
           id?: string
           platform_user_id?: string | null
+          response_used?: boolean | null
           sentiment: string
           sentiment_score: number
+          severity?: string | null
           source: string
           suggested_response?: string | null
+          tags?: string[] | null
+          team_approved?: boolean | null
           timestamp?: string
           user_id?: string | null
           user_name: string
         }
         Update: {
+          competitor?: string | null
           content?: string
           created_at?: string
+          emotions?: Json | null
           id?: string
           platform_user_id?: string | null
+          response_used?: boolean | null
           sentiment?: string
           sentiment_score?: number
+          severity?: string | null
           source?: string
           suggested_response?: string | null
+          tags?: string[] | null
+          team_approved?: boolean | null
           timestamp?: string
           user_id?: string | null
           user_name?: string
