@@ -23,6 +23,8 @@ By the time negative feedback trends are noticed on Twitter, Reddit, or app revi
 - 💬 Suggests empathetic, AI-generated responses  
 - 🔔 Sends instant alerts via Slack or Email  
 
+## Demo video link :- 
+https://youtu.be/XvpBPns4evs
 ---
 
 ## ✨ Key Features
