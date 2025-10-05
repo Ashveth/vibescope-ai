@@ -13,14 +13,7 @@ export const StatsCards = ({ mentions }: StatsCardsProps) => {
 
   const stats = [
     {
-      title: "Total Mentions",
-      value: total,
-      icon: Activity,
-      gradient: "bg-gradient-primary",
-      description: "All tracked mentions",
-    },
-    {
-      title: "Positive",
+      title: "😊 Positive",
       value: positive,
       percentage: total > 0 ? ((positive / total) * 100).toFixed(1) : 0,
       icon: TrendingUp,
@@ -28,7 +21,15 @@ export const StatsCards = ({ mentions }: StatsCardsProps) => {
       description: `${positive} positive mentions`,
     },
     {
-      title: "Negative",
+      title: "😐 Neutral",
+      value: neutral,
+      percentage: total > 0 ? ((neutral / total) * 100).toFixed(1) : 0,
+      icon: AlertTriangle,
+      gradient: "bg-gradient-warning",
+      description: `${neutral} neutral mentions`,
+    },
+    {
+      title: "😡 Negative",
       value: negative,
       percentage: total > 0 ? ((negative / total) * 100).toFixed(1) : 0,
       icon: TrendingDown,
@@ -36,12 +37,11 @@ export const StatsCards = ({ mentions }: StatsCardsProps) => {
       description: `${negative} require attention`,
     },
     {
-      title: "Neutral",
-      value: neutral,
-      percentage: total > 0 ? ((neutral / total) * 100).toFixed(1) : 0,
-      icon: AlertTriangle,
-      gradient: "bg-gradient-warning",
-      description: `${neutral} neutral mentions`,
+      title: "📊 Total Mentions",
+      value: total,
+      icon: Activity,
+      gradient: "bg-gradient-primary",
+      description: "All tracked mentions",
     },
   ];
 

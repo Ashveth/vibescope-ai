@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,6 +14,8 @@ import { Twitter, MessageSquare, Mail, Slack } from "lucide-react";
 export default function Settings() {
   const [autoAlerts, setAutoAlerts] = useState(true);
   const [threshold, setThreshold] = useState("medium");
+  const [alertFrequency, setAlertFrequency] = useState(5);
+  const [alertTimeWindow, setAlertTimeWindow] = useState(60);
   const [emailNotif, setEmailNotif] = useState(true);
   const [slackNotif, setSlackNotif] = useState(false);
   const [competitors, setCompetitors] = useState<string[]>([]);
@@ -95,6 +98,51 @@ export default function Settings() {
                 <SelectItem value="high">High - Negative only</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <Separator />
+
+          {/* Custom Alert Frequency Section */}
+          <div className="space-y-4 p-4 bg-muted/50 rounded-lg border border-border">
+            <div className="space-y-2">
+              <Label className="text-base font-semibold">⚠️ Custom Alert Threshold</Label>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm">Alert me if</span>
+                <Input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={alertFrequency}
+                  onChange={(e) => setAlertFrequency(Number(e.target.value))}
+                  className="w-20"
+                />
+                <span className="text-sm">negative mentions occur within</span>
+                <Input
+                  type="number"
+                  min="15"
+                  max="1440"
+                  value={alertTimeWindow}
+                  onChange={(e) => setAlertTimeWindow(Number(e.target.value))}
+                  className="w-24"
+                />
+                <span className="text-sm">minutes</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                You'll receive alerts when {alertFrequency} or more negative mentions occur within {alertTimeWindow} minutes
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Alert Frequency: {alertFrequency} mentions</Label>
+              <Slider
+                value={[alertFrequency]}
+                onValueChange={(val) => setAlertFrequency(val[0])}
+                min={1}
+                max={20}
+                step={1}
+                className="w-full"
+              />
+            </div>
           </div>
 
           <Separator />

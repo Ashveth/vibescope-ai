@@ -98,6 +98,21 @@ export default function Home() {
 
   const responseRate = mentions.filter(m => m.suggested_response).length / Math.max(mentions.length, 1) * 100;
 
+  // Extract top negative keywords
+  const negativeKeywords = mentions
+    .filter(m => m.sentiment === "negative")
+    .flatMap(m => m.content.toLowerCase().split(/\s+/))
+    .filter(word => word.length > 4 && !["this", "that", "with", "from", "have", "been", "very", "about"].includes(word))
+    .reduce((acc: any, word) => {
+      acc[word] = (acc[word] || 0) + 1;
+      return acc;
+    }, {});
+  
+  const topNegativeKeywords = Object.entries(negativeKeywords)
+    .sort(([, a]: any, [, b]: any) => b - a)
+    .slice(0, 8)
+    .map(([word, count]) => ({ word, count }));
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
@@ -112,6 +127,30 @@ export default function Home() {
       </div>
 
       <StatsCards mentions={mentions} />
+
+      {/* Top Negative Keywords */}
+      {topNegativeKeywords.length > 0 && (
+        <Card className="bg-card/50 backdrop-blur-sm border-danger/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🔥 Top Negative Keywords
+            </CardTitle>
+            <CardDescription>Most mentioned words in negative feedback</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {topNegativeKeywords.map(({ word, count }: any) => (
+                <div
+                  key={word}
+                  className="px-3 py-1.5 bg-danger/10 text-danger border border-danger/30 rounded-full text-sm font-medium"
+                >
+                  {word} ({count})
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="bg-card/50 backdrop-blur-sm border-primary/20">

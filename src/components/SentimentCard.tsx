@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ThumbsUp, ThumbsDown, Meh, Heart, Frown, Zap } from "lucide-react";
+import { MessageSquare, ThumbsUp, ThumbsDown, Meh, Heart, Frown, Zap, Sparkles, Loader2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SentimentCardProps {
   mention: {
@@ -51,6 +54,8 @@ const emotionIcons: any = {
 };
 
 export const SentimentCard = ({ mention }: SentimentCardProps) => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiReply, setAiReply] = useState(mention.suggested_response || "");
   const config = sentimentConfig[mention.sentiment];
   const Icon = config.icon;
   const topEmotions = mention.emotions
@@ -58,6 +63,28 @@ export const SentimentCard = ({ mention }: SentimentCardProps) => {
         .sort(([, a]: any, [, b]: any) => b - a)
         .slice(0, 3)
     : [];
+
+  const generateAIReply = async () => {
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('suggest-reply', {
+        body: {
+          content: mention.content,
+          sentiment: mention.sentiment,
+          emotions: mention.emotions,
+        },
+      });
+
+      if (error) throw error;
+      
+      setAiReply(data.suggestedReply);
+      toast.success("✨ AI reply generated!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to generate reply");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <Card className={cn(
@@ -123,18 +150,61 @@ export const SentimentCard = ({ mention }: SentimentCardProps) => {
           </div>
         )}
         
-        {mention.suggested_response && (
-          <div className="p-3 rounded-lg bg-muted/50 border border-border space-y-2">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-primary" />
-              <span className="text-xs font-medium text-primary">AI Suggested Response</span>
-            </div>
-            <p className="text-sm">{mention.suggested_response}</p>
-            <Button size="sm" variant="outline" className="w-full mt-2">
-              Use This Response
-            </Button>
+        {/* AI Suggested Response */}
+        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-xs font-medium text-primary">AI Suggested Response</span>
           </div>
-        )}
+          
+          {aiReply ? (
+            <>
+              <p className="text-sm">{aiReply}</p>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    navigator.clipboard.writeText(aiReply);
+                    toast.success("📋 Response copied!");
+                  }}
+                >
+                  <Copy className="mr-1 h-3 w-3" />
+                  Copy
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={generateAIReply}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? <Loader2 className="h-3 w-3 animate-spin" /> : "Regenerate"}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <Button 
+              size="sm" 
+              variant="default"
+              className="w-full bg-gradient-primary"
+              onClick={generateAIReply}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-3 w-3" />
+                  Suggest Reply
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
